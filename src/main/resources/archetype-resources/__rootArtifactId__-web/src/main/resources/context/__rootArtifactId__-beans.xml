@@ -26,7 +26,7 @@
         </property>
         <property name="hibernateProperties">
             <props>
-                <prop key="hibernate.hbm2ddl.auto">update</prop>
+                <prop key="hibernate.hbm2ddl.auto">create_update</prop>
                 <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
             </props>
         </property>
