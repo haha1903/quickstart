@@ -1,7 +1,7 @@
-#set( $symbol_pound = '#' )
-#set( $symbol_dollar = '$' )
-#set( $symbol_escape = '\' )
-package ${package};
+#set($symbol_pound='#')
+        #set($symbol_dollar='$')
+        #set($symbol_escape='\' )
+        package ${package};
 
 import ${package}.model.User;
 import com.mysql.jdbc.Driver;
@@ -13,7 +13,6 @@ import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
-import org.springframework.security.ldap.SpringSecurityLdapTemplate;
 
 import java.util.List;
 
@@ -26,6 +25,12 @@ import static junit.framework.Assert.assertNotNull;
  * DataYes
  */
 public class DatayesTest {
+    @Test
+    public void testLoadContext() throws Exception {
+        ApplicationContext context = new ClassPathXmlApplicationContext("context/${rootArtifactId}-beans.xml");
+        assertNotNull(context);
+    }
+
     @Test
     public void testDao() throws Exception {
         LocalSessionFactoryBean localSessionFactoryBean = new LocalSessionFactoryBean();
@@ -45,11 +50,5 @@ public class DatayesTest {
         session.save(user);
         session.flush();
         session.close();
-    }
-
-    @Test
-    public void testLoadContext() throws Exception {
-        ApplicationContext context = new ClassPathXmlApplicationContext("context/${rootArtifactId}-beans.xml");
-        assertNotNull(context);
     }
 }

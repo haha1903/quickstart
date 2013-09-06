@@ -4,8 +4,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:tx="http://www.springframework.org/schema/tx"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
     <context:property-placeholder file-encoding="UTF-8" ignore-resource-not-found="true" location="classpath*:context/${rootArtifactId}-*.properties"/>
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource" p:cacheSeconds="0">
         <property name="basenames">
@@ -14,19 +14,23 @@
             </list>
         </property>
     </bean>
+    <bean id="initDataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource" p:username="${symbol_dollar}{${rootArtifactId}.database.username}" p:password="${symbol_dollar}{${rootArtifactId}.database.password}"
+          p:driverClass="${symbol_dollar}{${rootArtifactId}.database.driver}" p:url="${symbol_dollar}{${rootArtifactId}.database.base}"/>
+    <jdbc:initialize-database data-source="initDataSource">
+        <jdbc:script location="classpath:sql/init-database.sql"/>
+    </jdbc:initialize-database>
     <context:component-scan base-package="${package}">
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
     <tx:annotation-driven/>
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" p:username="${symbol_dollar}{${rootArtifactId}.database.username}" p:password="${symbol_dollar}{${rootArtifactId}.database.password}"
+          p:driverClassName="${symbol_dollar}{${rootArtifactId}.database.driver}" p:url="${symbol_dollar}{${rootArtifactId}.database.url}"/>
     <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <property name="packagesToScan" value="${package}.model"/>
-        <property name="dataSource">
-            <bean class="org.apache.commons.dbcp.BasicDataSource" p:username="${symbol_dollar}{${rootArtifactId}.database.username}" p:password="${symbol_dollar}{${rootArtifactId}.database.password}"
-                  p:driverClassName="${symbol_dollar}{${rootArtifactId}.database.driver}" p:url="${symbol_dollar}{${rootArtifactId}.database.url}"/>
-        </property>
+        <property name="dataSource" ref="dataSource"/>
         <property name="hibernateProperties">
             <props>
-                <prop key="hibernate.hbm2ddl.auto">create_update</prop>
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
                 <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
             </props>
         </property>
