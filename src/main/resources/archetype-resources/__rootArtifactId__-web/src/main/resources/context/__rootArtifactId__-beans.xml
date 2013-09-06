@@ -1,0 +1,35 @@
+#set( $symbol_pound = '#' )
+#set( $symbol_dollar = '$' )
+#set( $symbol_escape = '\' )
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+    <context:property-placeholder file-encoding="UTF-8" ignore-resource-not-found="true" location="classpath*:context/${rootArtifactId}-*.properties"/>
+    <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource" p:cacheSeconds="0">
+        <property name="basenames">
+            <list>
+                <value>classpath:context/${rootArtifactId}-env</value>
+            </list>
+        </property>
+    </bean>
+    <context:component-scan base-package="${package}">
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+    <tx:annotation-driven/>
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="packagesToScan" value="${package}.model"/>
+        <property name="dataSource">
+            <bean class="org.apache.commons.dbcp.BasicDataSource" p:username="${symbol_dollar}{${rootArtifactId}.database.username}" p:password="${symbol_dollar}{${rootArtifactId}.database.password}"
+                  p:driverClassName="${symbol_dollar}{${rootArtifactId}.database.driver}" p:url="${symbol_dollar}{${rootArtifactId}.database.url}"/>
+        </property>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
+            </props>
+        </property>
+    </bean>
+    <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager" p:sessionFactory-ref="sessionFactory"/>
+</beans>

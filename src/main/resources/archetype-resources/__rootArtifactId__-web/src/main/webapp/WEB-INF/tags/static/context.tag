@@ -1,0 +1,1 @@
+<%@ tag language="java" pageEncoding="UTF-8" import="org.springframework.web.context.support.WebApplicationContextUtils"%><%@ tag import="${package}.DatayesConstants" %><%=WebApplicationContextUtils.getWebApplicationContext(application).getMessage(DatayesConstants.STATIC_PATH, null, null)%>
