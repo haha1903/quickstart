@@ -8,5 +8,23 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
     <artifactId>${artifactId}</artifactId>
-
+    <profiles>
+        <profile>
+            <id>static</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.tomcat.maven</groupId>
+                        <artifactId>tomcat7-maven-plugin</artifactId>
+                        <version>2.2-SNAPSHOT</version>
+                        <configuration>
+                            <ignorePackaging>true</ignorePackaging>
+                            <path>/</path>
+                            <warSourceDirectory>${basedir}/src/main/resources</warSourceDirectory>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
